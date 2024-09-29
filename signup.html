@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-analytics.js"></script>
+</head>
+<body>
+    <h1>Sign Up</h1>
+
+    <!-- Sign-Up Form -->
+    <form id="signupForm" class="input-form" onsubmit="sendOTP(event)">
+        <label for="phone">Enter your phone number:</label>
+        <input type="text" id="phone" name="phone" required placeholder="Enter your phone number">
+
+        <!-- Submit button to receive OTP -->
+        <button type="submit" class="submit-button">Send OTP</button>
+    </form>
+
+    <!-- OTP Input Form (shown after sending OTP) -->
+    <form id="otpForm" class="input-form" style="display: none;" onsubmit="verifyOTP(event)">
+        <label for="otp">Enter the OTP:</label>
+        <input type="text" id="otp" name="otp" required placeholder="Enter the OTP">
+
+        <!-- Submit button to verify OTP -->
+        <button type="submit" class="submit-button">Verify OTP</button>
+    </form>
+
+    <!-- ReCAPTCHA container -->
+    <div id="recaptcha-container"></div>
+
+    <script>
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBZWLDTGS1Y0vhTEdkTkX9_nQMLw_aWyGI",
+            authDomain: "otpgeneration-d09cc.firebaseapp.com",
+            projectId: "otpgeneration-d09cc",
+            storageBucket: "otpgeneration-d09cc.appspot.com",
+            messagingSenderId: "140446724256",
+            appId: "1:140446724256:web:ba6737d6cc6a282d9719c5",
+            measurementId: "G-CBRXPNRR1T"
+        };
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.getAuth();
+
+        // Set up ReCAPTCHA
+        window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+            'size': 'invisible', // or 'normal'
+            'callback': function(response) {
+                // ReCAPTCHA solved - will proceed with submit function
+            },
+            'expired-callback': function() {
+                // Response expired. Ask user to solve ReCAPTCHA again.
+            }
+        });
+
+        // Function to send OTP
+        function sendOTP(event) {
+            event.preventDefault(); // Prevent the default form submission behavior
+            const phoneNumber = document.getElementById('phone').value; // Get phone number input
+            const appVerifier = window.recaptchaVerifier;
+
+            firebase.auth().signInWithPhoneNumber(auth, phoneNumber, appVerifier)
+                .then((confirmationResult) => {
+                    // SMS sent. Prompt user to type the code from the message
+                    window.confirmationResult = confirmationResult;
+                    alert("OTP sent successfully! Please check your phone.");
+                    document.getElementById('signupForm').style.display = 'none';
+                    document.getElementById('otpForm').style.display = 'block';
+                }).catch((error) => {
+                    // Error; SMS not sent
+                    console.error("Error during signInWithPhoneNumber", error);
+                    alert("Error sending OTP. Please try again.");
+                });
+        }
+
+        // Function to verify OTP
+        function verifyOTP(event) {
+            event.preventDefault(); // Prevent the default form submission behavior
+            const code = document.getElementById('otp').value; // Get OTP input
+            window.confirmationResult.confirm(code).then((result) => {
+                const user = result.user;
+                alert("OTP verified! User signed in successfully.");
+                // You can redirect or perform any further actions here
+            }).catch((error) => {
+                console.error("Error verifying OTP", error);
+                alert("Invalid OTP. Please try again.");
+            });
+        }
+    </script>
+</body>
+</html>
