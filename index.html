@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Welcome to Website</h1>
+
+    <!-- Container for button positioned at the top-right corner -->
+    <div class="button-container">
+        <button id="toggleButton" class="changemode" aria-label="Toggle Dark Mode">🌞</button>
+    </div>
+
+    <!-- Form for input fields with onsubmit handler -->
+    <form id="userForm" class="input-form" onsubmit="return validateForm()">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required placeholder="Enter your name">
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required placeholder="Enter your password">
+
+        <label for="officeId">Office ID:</label>
+        <input type="text" id="officeId" name="officeId" required placeholder="Enter your office ID">
+
+        <!-- Submit button -->
+        <button type="submit" class="submit-button">Submit</button>
+
+        <!-- New user? Sign Up text and link -->
+        <p class="signup-text">New user? <a href="signup.html">SIGN UP</a></p>
+    </form>
+
+    <!-- Image to be placed at the top-left corner -->
+    <img src="VPF LOGO.png" alt="VPF Logo" class="top-left-image">
+
+    <script src="interact.js"></script>
+</body>
+</html>
